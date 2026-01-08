@@ -1,0 +1,783 @@
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "Address" (
+	"address_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"city"	VARCHAR(50),
+	"state"	VARCHAR(50),
+	"country"	VARCHAR(50),
+	CONSTRAINT "Address_PK" PRIMARY KEY("address_id"),
+	CONSTRAINT "Address_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Cart" (
+	"cart_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	CONSTRAINT "Cart_PK" PRIMARY KEY("cart_id"),
+	CONSTRAINT "Cart_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Cart_Product" (
+	"cart_id"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	CONSTRAINT "Cart_Product_PK" PRIMARY KEY("cart_id","product_id"),
+	CONSTRAINT "CP_Cart_FK" FOREIGN KEY("cart_id") REFERENCES "Cart"("cart_id"),
+	CONSTRAINT "CP_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id")
+);
+CREATE TABLE IF NOT EXISTS "Category" (
+	"category_id"	INT NOT NULL,
+	"name"	VARCHAR(50),
+	CONSTRAINT "Category_PK" PRIMARY KEY("category_id")
+);
+CREATE TABLE IF NOT EXISTS "Discount" (
+	"discount_id"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	"discount_code"	VARCHAR(6),
+	"percentage"	DECIMAL(5, 2),
+	"expiry_date"	DATE,
+	CONSTRAINT "Discount_PK" PRIMARY KEY("discount_id"),
+	CONSTRAINT "Discount_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id")
+);
+CREATE TABLE IF NOT EXISTS "Order_Product" (
+	"order_no"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	CONSTRAINT "Order_Product_PK" PRIMARY KEY("order_no","product_id"),
+	CONSTRAINT "OP_Order_FK" FOREIGN KEY("order_no") REFERENCES "Orders"("order_no"),
+	CONSTRAINT "OP_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id")
+);
+CREATE TABLE IF NOT EXISTS "Orders" (
+	"order_no"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"order_date"	DATE,
+	"order_amount"	DECIMAL(10, 2),
+	CONSTRAINT "Orders_PK" PRIMARY KEY("order_no"),
+	CONSTRAINT "Orders_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Payment" (
+	"payment_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"payment_method"	VARCHAR(50),
+	"payment_amount"	DECIMAL(10, 2),
+	CONSTRAINT "Payment_PK" PRIMARY KEY("payment_id"),
+	CONSTRAINT "Payment_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Product" (
+	"product_id"	INT NOT NULL,
+	"name"	VARCHAR(100),
+	"description"	VARCHAR(255),
+	"price"	DECIMAL(10, 2),
+	"category_id"	INT NOT NULL,
+	CONSTRAINT "Product_PK" PRIMARY KEY("product_id"),
+	CONSTRAINT "Product_Category_FK" FOREIGN KEY("category_id") REFERENCES "Category"("category_id")
+);
+CREATE TABLE IF NOT EXISTS "Review" (
+	"review_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	"rating"	INT,
+	"comments"	VARCHAR(255),
+	CONSTRAINT "Review_PK" PRIMARY KEY("review_id"),
+	CONSTRAINT "Review_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id"),
+	CONSTRAINT "Review_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Tracking_Detail" (
+	"tracking_id"	INT NOT NULL,
+	"order_no"	INT NOT NULL,
+	CONSTRAINT "Tracking_PK" PRIMARY KEY("tracking_id"),
+	CONSTRAINT "Tracking_Order_FK" FOREIGN KEY("order_no") REFERENCES "Orders"("order_no")
+);
+CREATE TABLE IF NOT EXISTS "User" (
+	"user_id"	INT NOT NULL,
+	"first_name"	VARCHAR(50),
+	"last_name"	VARCHAR(50),
+	"email"	VARCHAR(100),
+	"password"	VARCHAR(100),
+	"phone"	VARCHAR(20),
+	CONSTRAINT "User_email_UQ" UNIQUE("email"),
+	CONSTRAINT "User_PK" PRIMARY KEY("user_id")
+);
+CREATE TABLE IF NOT EXISTS "admin" (
+	"admin_id"	INT AUTO_INCREMENT,
+	"email"	VARCHAR(255) NOT NULL UNIQUE,
+	"name"	VARCHAR(100) NOT NULL,
+	"password"	VARCHAR(255) NOT NULL,
+	"role"	VARCHAR(50) NOT NULL,
+	PRIMARY KEY("admin_id")
+);
+INSERT INTO "Address" VALUES (1,1,'Cairo','New Cairo','Egypt');
+INSERT INTO "Address" VALUES (2,2,'Giza','6th of October','Egypt');
+INSERT INTO "Address" VALUES (3,3,'Alexandria','Stanley','Egypt');
+INSERT INTO "Address" VALUES (4,4,'Cairo','Heliopolis','Egypt');
+INSERT INTO "Address" VALUES (5,5,'Giza','Sheikh Zayed','Egypt');
+INSERT INTO "Address" VALUES (6,6,'Alexandria','Smouha','Egypt');
+INSERT INTO "Address" VALUES (7,7,'Cairo','Nasr City','Egypt');
+INSERT INTO "Address" VALUES (8,8,'Giza','Haram','Egypt');
+INSERT INTO "Cart" VALUES (1,1);
+INSERT INTO "Cart" VALUES (2,2);
+INSERT INTO "Cart" VALUES (3,3);
+INSERT INTO "Cart" VALUES (4,4);
+INSERT INTO "Cart" VALUES (5,5);
+INSERT INTO "Cart" VALUES (6,6);
+INSERT INTO "Cart" VALUES (7,7);
+INSERT INTO "Cart" VALUES (8,8);
+INSERT INTO "Cart_Product" VALUES (1,1);
+INSERT INTO "Cart_Product" VALUES (1,5);
+INSERT INTO "Cart_Product" VALUES (2,3);
+INSERT INTO "Cart_Product" VALUES (2,6);
+INSERT INTO "Cart_Product" VALUES (3,2);
+INSERT INTO "Cart_Product" VALUES (3,7);
+INSERT INTO "Cart_Product" VALUES (4,10);
+INSERT INTO "Cart_Product" VALUES (5,4);
+INSERT INTO "Cart_Product" VALUES (6,8);
+INSERT INTO "Cart_Product" VALUES (7,9);
+INSERT INTO "Cart_Product" VALUES (8,1);
+INSERT INTO "Cart_Product" VALUES (1,11);
+INSERT INTO "Cart_Product" VALUES (1,19);
+INSERT INTO "Cart_Product" VALUES (2,12);
+INSERT INTO "Cart_Product" VALUES (2,20);
+INSERT INTO "Cart_Product" VALUES (3,13);
+INSERT INTO "Cart_Product" VALUES (3,21);
+INSERT INTO "Cart_Product" VALUES (4,14);
+INSERT INTO "Cart_Product" VALUES (4,22);
+INSERT INTO "Cart_Product" VALUES (5,15);
+INSERT INTO "Cart_Product" VALUES (5,23);
+INSERT INTO "Cart_Product" VALUES (6,16);
+INSERT INTO "Cart_Product" VALUES (6,24);
+INSERT INTO "Cart_Product" VALUES (7,17);
+INSERT INTO "Cart_Product" VALUES (7,25);
+INSERT INTO "Cart_Product" VALUES (8,18);
+INSERT INTO "Cart_Product" VALUES (8,26);
+INSERT INTO "Cart_Product" VALUES (1,61);
+INSERT INTO "Cart_Product" VALUES (2,62);
+INSERT INTO "Cart_Product" VALUES (3,63);
+INSERT INTO "Cart_Product" VALUES (4,64);
+INSERT INTO "Cart_Product" VALUES (5,65);
+INSERT INTO "Cart_Product" VALUES (6,66);
+INSERT INTO "Cart_Product" VALUES (7,67);
+INSERT INTO "Cart_Product" VALUES (8,68);
+INSERT INTO "Cart_Product" VALUES (1,69);
+INSERT INTO "Cart_Product" VALUES (2,70);
+INSERT INTO "Cart_Product" VALUES (3,71);
+INSERT INTO "Cart_Product" VALUES (4,72);
+INSERT INTO "Cart_Product" VALUES (5,73);
+INSERT INTO "Cart_Product" VALUES (6,74);
+INSERT INTO "Cart_Product" VALUES (7,75);
+INSERT INTO "Cart_Product" VALUES (8,76);
+INSERT INTO "Category" VALUES (1,'Women Clothing');
+INSERT INTO "Category" VALUES (2,'Men Clothing');
+INSERT INTO "Category" VALUES (3,'Accessories');
+INSERT INTO "Category" VALUES (4,'Shoes');
+INSERT INTO "Category" VALUES (5,'Bags');
+INSERT INTO "Category" VALUES (6,'Dresses');
+INSERT INTO "Category" VALUES (7,'Activewear');
+INSERT INTO "Category" VALUES (8,'Sleepwear');
+INSERT INTO "Category" VALUES (9,'Denim');
+INSERT INTO "Category" VALUES (10,'Outerwear');
+INSERT INTO "Category" VALUES (11,'Knitwear');
+INSERT INTO "Category" VALUES (12,'Swimwear');
+INSERT INTO "Category" VALUES (13,'Formalwear');
+INSERT INTO "Category" VALUES (14,'Streetwear');
+INSERT INTO "Category" VALUES (15,'Basics');
+INSERT INTO "Category" VALUES (16,'Jewelry');
+INSERT INTO "Category" VALUES (17,'Hats');
+INSERT INTO "Category" VALUES (18,'Belts');
+INSERT INTO "Category" VALUES (19,'Scarves');
+INSERT INTO "Category" VALUES (20,'Sunglasses');
+INSERT INTO "Category" VALUES (21,'Heels');
+INSERT INTO "Category" VALUES (22,'Sandals');
+INSERT INTO "Category" VALUES (23,'Boots');
+INSERT INTO "Category" VALUES (24,'Backpacks');
+INSERT INTO "Category" VALUES (25,'Wallets');
+INSERT INTO "Category" VALUES (26,'Clutches');
+INSERT INTO "Category" VALUES (27,'Tops');
+INSERT INTO "Category" VALUES (28,'Bottoms');
+INSERT INTO "Category" VALUES (29,'Sets');
+INSERT INTO "Category" VALUES (30,'Loungewear');
+INSERT INTO "Category" VALUES (31,'Coats');
+INSERT INTO "Category" VALUES (32,'Jackets');
+INSERT INTO "Category" VALUES (33,'Blazers');
+INSERT INTO "Category" VALUES (34,'Cardigans');
+INSERT INTO "Category" VALUES (35,'Sweaters');
+INSERT INTO "Category" VALUES (36,'Shorts');
+INSERT INTO "Category" VALUES (37,'Skirts');
+INSERT INTO "Category" VALUES (38,'Leggings');
+INSERT INTO "Category" VALUES (39,'Socks');
+INSERT INTO "Category" VALUES (40,'Underwear');
+INSERT INTO "Category" VALUES (41,'Bras');
+INSERT INTO "Category" VALUES (42,'Pajamas');
+INSERT INTO "Category" VALUES (43,'Robes');
+INSERT INTO "Category" VALUES (44,'Beachwear');
+INSERT INTO "Category" VALUES (45,'Sportswear');
+INSERT INTO "Category" VALUES (46,'Officewear');
+INSERT INTO "Category" VALUES (47,'Partywear');
+INSERT INTO "Category" VALUES (48,'Casualwear');
+INSERT INTO "Category" VALUES (49,'Travel');
+INSERT INTO "Category" VALUES (50,'Seasonal');
+INSERT INTO "Category" VALUES (51,'Eco Wear');
+INSERT INTO "Category" VALUES (52,'Luxury');
+INSERT INTO "Category" VALUES (53,'Kids');
+INSERT INTO "Category" VALUES (54,'Maternity');
+INSERT INTO "Category" VALUES (55,'Uniforms');
+INSERT INTO "Category" VALUES (56,'Winter');
+INSERT INTO "Category" VALUES (57,'Summer');
+INSERT INTO "Category" VALUES (58,'Rainwear');
+INSERT INTO "Category" VALUES (59,'Basics Plus');
+INSERT INTO "Category" VALUES (60,'Limited');
+INSERT INTO "Category" VALUES (61,'Athleisure');
+INSERT INTO "Category" VALUES (62,'Minimal');
+INSERT INTO "Category" VALUES (63,'Boho');
+INSERT INTO "Category" VALUES (64,'Vintage');
+INSERT INTO "Category" VALUES (65,'Urban');
+INSERT INTO "Category" VALUES (66,'Festival');
+INSERT INTO "Category" VALUES (67,'Gym');
+INSERT INTO "Category" VALUES (68,'Yoga');
+INSERT INTO "Category" VALUES (69,'Cycling');
+INSERT INTO "Category" VALUES (70,'Running');
+INSERT INTO "Category" VALUES (71,'Classic');
+INSERT INTO "Category" VALUES (72,'Modern');
+INSERT INTO "Category" VALUES (73,'Statement');
+INSERT INTO "Category" VALUES (74,'Trendy');
+INSERT INTO "Category" VALUES (75,'Essentials');
+INSERT INTO "Category" VALUES (76,'Daily');
+INSERT INTO "Category" VALUES (77,'Comfort');
+INSERT INTO "Category" VALUES (78,'Premium');
+INSERT INTO "Category" VALUES (79,'Budget');
+INSERT INTO "Category" VALUES (80,'Luxury Bags');
+INSERT INTO "Category" VALUES (81,'Luxury Shoes');
+INSERT INTO "Category" VALUES (82,'Luxury Jewelry');
+INSERT INTO "Category" VALUES (83,'Formal Shoes');
+INSERT INTO "Category" VALUES (84,'Casual Shoes');
+INSERT INTO "Category" VALUES (85,'Office Bags');
+INSERT INTO "Category" VALUES (86,'Travel Bags');
+INSERT INTO "Category" VALUES (87,'Smart Wear');
+INSERT INTO "Category" VALUES (88,'Home Wear');
+INSERT INTO "Category" VALUES (89,'Night Wear');
+INSERT INTO "Category" VALUES (90,'Outdoor');
+INSERT INTO "Category" VALUES (91,'Rain Shoes');
+INSERT INTO "Category" VALUES (92,'Sports Shoes');
+INSERT INTO "Category" VALUES (93,'Designer');
+INSERT INTO "Category" VALUES (94,'Limited Bags');
+INSERT INTO "Category" VALUES (95,'Limited Shoes');
+INSERT INTO "Category" VALUES (96,'Limited Jewelry');
+INSERT INTO "Category" VALUES (97,'Kids Shoes');
+INSERT INTO "Category" VALUES (98,'Kids Clothing');
+INSERT INTO "Category" VALUES (99,'Teens');
+INSERT INTO "Category" VALUES (100,'Seniors');
+INSERT INTO "Discount" VALUES (1,1,'SAVE10',10,'2025-02-01');
+INSERT INTO "Discount" VALUES (2,3,'HOOD15',15,'2025-02-10');
+INSERT INTO "Discount" VALUES (3,7,'SHOE20',20,'2025-03-01');
+INSERT INTO "Discount" VALUES (4,6,'BAG5',5,'2025-01-31');
+INSERT INTO "Discount" VALUES (5,11,'DRESS5',5,'2025-02-10');
+INSERT INTO "Discount" VALUES (6,13,'SPORT10',10,'2025-03-01');
+INSERT INTO "Discount" VALUES (7,15,'SLEEP15',15,'2025-02-20');
+INSERT INTO "Discount" VALUES (8,17,'JACK20',20,'2025-03-15');
+INSERT INTO "Discount" VALUES (9,21,'JEANS10',10,'2025-02-28');
+INSERT INTO "Discount" VALUES (10,26,'OFFICE5',5,'2025-04-01');
+INSERT INTO "Discount" VALUES (11,29,'HOOD10',10,'2025-03-05');
+INSERT INTO "Discount" VALUES (12,35,'SHOE15',15,'2025-03-20');
+INSERT INTO "Discount" VALUES (13,61,'ECO10',10,'2025-03-01');
+INSERT INTO "Discount" VALUES (14,62,'LUX15',15,'2025-03-10');
+INSERT INTO "Discount" VALUES (15,63,'KID5',5,'2025-02-28');
+INSERT INTO "Discount" VALUES (16,66,'WIN20',20,'2025-03-15');
+INSERT INTO "Discount" VALUES (17,70,'LIMIT10',10,'2025-03-20');
+INSERT INTO "Discount" VALUES (18,75,'URBAN5',5,'2025-02-25');
+INSERT INTO "Discount" VALUES (19,80,'RUN10',10,'2025-03-05');
+INSERT INTO "Discount" VALUES (20,90,'BAG15',15,'2025-04-01');
+INSERT INTO "Order_Product" VALUES (1,1);
+INSERT INTO "Order_Product" VALUES (1,5);
+INSERT INTO "Order_Product" VALUES (2,6);
+INSERT INTO "Order_Product" VALUES (3,2);
+INSERT INTO "Order_Product" VALUES (3,7);
+INSERT INTO "Order_Product" VALUES (4,10);
+INSERT INTO "Order_Product" VALUES (4,5);
+INSERT INTO "Order_Product" VALUES (5,4);
+INSERT INTO "Order_Product" VALUES (6,8);
+INSERT INTO "Order_Product" VALUES (7,9);
+INSERT INTO "Order_Product" VALUES (8,1);
+INSERT INTO "Order_Product" VALUES (8,6);
+INSERT INTO "Order_Product" VALUES (9,11);
+INSERT INTO "Order_Product" VALUES (10,12);
+INSERT INTO "Order_Product" VALUES (11,13);
+INSERT INTO "Order_Product" VALUES (12,14);
+INSERT INTO "Order_Product" VALUES (13,15);
+INSERT INTO "Order_Product" VALUES (14,16);
+INSERT INTO "Order_Product" VALUES (15,17);
+INSERT INTO "Order_Product" VALUES (16,18);
+INSERT INTO "Order_Product" VALUES (17,19);
+INSERT INTO "Order_Product" VALUES (18,20);
+INSERT INTO "Order_Product" VALUES (19,21);
+INSERT INTO "Order_Product" VALUES (20,22);
+INSERT INTO "Order_Product" VALUES (21,23);
+INSERT INTO "Order_Product" VALUES (22,24);
+INSERT INTO "Order_Product" VALUES (23,25);
+INSERT INTO "Order_Product" VALUES (24,26);
+INSERT INTO "Order_Product" VALUES (25,27);
+INSERT INTO "Order_Product" VALUES (26,28);
+INSERT INTO "Order_Product" VALUES (27,29);
+INSERT INTO "Order_Product" VALUES (28,30);
+INSERT INTO "Order_Product" VALUES (29,31);
+INSERT INTO "Order_Product" VALUES (30,32);
+INSERT INTO "Order_Product" VALUES (31,33);
+INSERT INTO "Order_Product" VALUES (32,34);
+INSERT INTO "Order_Product" VALUES (33,61);
+INSERT INTO "Order_Product" VALUES (34,62);
+INSERT INTO "Order_Product" VALUES (35,63);
+INSERT INTO "Order_Product" VALUES (36,64);
+INSERT INTO "Order_Product" VALUES (37,65);
+INSERT INTO "Order_Product" VALUES (38,66);
+INSERT INTO "Order_Product" VALUES (39,67);
+INSERT INTO "Order_Product" VALUES (40,68);
+INSERT INTO "Order_Product" VALUES (41,69);
+INSERT INTO "Order_Product" VALUES (42,70);
+INSERT INTO "Order_Product" VALUES (43,71);
+INSERT INTO "Order_Product" VALUES (44,72);
+INSERT INTO "Order_Product" VALUES (45,73);
+INSERT INTO "Order_Product" VALUES (46,74);
+INSERT INTO "Order_Product" VALUES (47,75);
+INSERT INTO "Order_Product" VALUES (48,76);
+INSERT INTO "Order_Product" VALUES (49,77);
+INSERT INTO "Order_Product" VALUES (50,78);
+INSERT INTO "Order_Product" VALUES (51,79);
+INSERT INTO "Order_Product" VALUES (52,80);
+INSERT INTO "Order_Product" VALUES (53,81);
+INSERT INTO "Order_Product" VALUES (54,82);
+INSERT INTO "Order_Product" VALUES (55,83);
+INSERT INTO "Order_Product" VALUES (56,84);
+INSERT INTO "Order_Product" VALUES (57,85);
+INSERT INTO "Order_Product" VALUES (58,86);
+INSERT INTO "Order_Product" VALUES (59,87);
+INSERT INTO "Order_Product" VALUES (60,88);
+INSERT INTO "Order_Product" VALUES (61,89);
+INSERT INTO "Order_Product" VALUES (62,90);
+INSERT INTO "Order_Product" VALUES (63,91);
+INSERT INTO "Order_Product" VALUES (64,92);
+INSERT INTO "Order_Product" VALUES (65,93);
+INSERT INTO "Order_Product" VALUES (66,94);
+INSERT INTO "Order_Product" VALUES (67,95);
+INSERT INTO "Order_Product" VALUES (68,96);
+INSERT INTO "Order_Product" VALUES (69,97);
+INSERT INTO "Order_Product" VALUES (70,98);
+INSERT INTO "Order_Product" VALUES (71,99);
+INSERT INTO "Order_Product" VALUES (72,100);
+INSERT INTO "Orders" VALUES (1,1,'2025-01-10',797);
+INSERT INTO "Orders" VALUES (2,2,'2025-01-11',1199);
+INSERT INTO "Orders" VALUES (3,3,'2025-01-12',1798);
+INSERT INTO "Orders" VALUES (4,4,'2025-01-13',698);
+INSERT INTO "Orders" VALUES (5,5,'2025-01-14',498);
+INSERT INTO "Orders" VALUES (6,6,'2025-01-15',1299);
+INSERT INTO "Orders" VALUES (7,7,'2025-01-16',1199);
+INSERT INTO "Orders" VALUES (8,8,'2025-01-17',848);
+INSERT INTO "Orders" VALUES (9,1,'2025-01-18',899);
+INSERT INTO "Orders" VALUES (10,2,'2025-01-18',1199);
+INSERT INTO "Orders" VALUES (11,3,'2025-01-19',798);
+INSERT INTO "Orders" VALUES (12,4,'2025-01-19',349);
+INSERT INTO "Orders" VALUES (13,5,'2025-01-20',699);
+INSERT INTO "Orders" VALUES (14,6,'2025-01-20',899);
+INSERT INTO "Orders" VALUES (15,7,'2025-01-21',1399);
+INSERT INTO "Orders" VALUES (16,8,'2025-01-21',1599);
+INSERT INTO "Orders" VALUES (17,1,'2025-01-22',199);
+INSERT INTO "Orders" VALUES (18,2,'2025-01-22',179);
+INSERT INTO "Orders" VALUES (19,3,'2025-01-23',749);
+INSERT INTO "Orders" VALUES (20,4,'2025-01-23',699);
+INSERT INTO "Orders" VALUES (21,5,'2025-01-24',499);
+INSERT INTO "Orders" VALUES (22,6,'2025-01-24',349);
+INSERT INTO "Orders" VALUES (23,7,'2025-01-25',799);
+INSERT INTO "Orders" VALUES (24,8,'2025-01-25',1299);
+INSERT INTO "Orders" VALUES (25,1,'2025-01-26',599);
+INSERT INTO "Orders" VALUES (26,2,'2025-01-26',749);
+INSERT INTO "Orders" VALUES (27,3,'2025-01-27',649);
+INSERT INTO "Orders" VALUES (28,4,'2025-01-27',499);
+INSERT INTO "Orders" VALUES (29,5,'2025-01-28',899);
+INSERT INTO "Orders" VALUES (30,6,'2025-01-28',699);
+INSERT INTO "Orders" VALUES (31,7,'2025-01-29',499);
+INSERT INTO "Orders" VALUES (32,8,'2025-01-29',399);
+INSERT INTO "Orders" VALUES (33,1,'2025-02-01',299);
+INSERT INTO "Orders" VALUES (34,2,'2025-02-01',1999);
+INSERT INTO "Orders" VALUES (35,3,'2025-02-02',399);
+INSERT INTO "Orders" VALUES (36,4,'2025-02-02',799);
+INSERT INTO "Orders" VALUES (37,5,'2025-02-03',599);
+INSERT INTO "Orders" VALUES (38,6,'2025-02-03',1799);
+INSERT INTO "Orders" VALUES (39,7,'2025-02-04',349);
+INSERT INTO "Orders" VALUES (40,8,'2025-02-04',899);
+INSERT INTO "Orders" VALUES (41,1,'2025-02-05',299);
+INSERT INTO "Orders" VALUES (42,2,'2025-02-05',1599);
+INSERT INTO "Orders" VALUES (43,3,'2025-02-06',999);
+INSERT INTO "Orders" VALUES (44,4,'2025-02-06',549);
+INSERT INTO "Orders" VALUES (45,5,'2025-02-07',899);
+INSERT INTO "Orders" VALUES (46,6,'2025-02-07',1099);
+INSERT INTO "Orders" VALUES (47,7,'2025-02-08',699);
+INSERT INTO "Orders" VALUES (48,8,'2025-02-08',499);
+INSERT INTO "Orders" VALUES (49,1,'2025-02-09',249);
+INSERT INTO "Orders" VALUES (50,2,'2025-02-09',399);
+INSERT INTO "Orders" VALUES (51,3,'2025-02-10',449);
+INSERT INTO "Orders" VALUES (52,4,'2025-02-10',349);
+INSERT INTO "Orders" VALUES (53,5,'2025-02-11',1499);
+INSERT INTO "Orders" VALUES (54,6,'2025-02-11',1299);
+INSERT INTO "Orders" VALUES (55,7,'2025-02-12',1799);
+INSERT INTO "Orders" VALUES (56,8,'2025-02-12',499);
+INSERT INTO "Orders" VALUES (57,1,'2025-02-13',199);
+INSERT INTO "Orders" VALUES (58,2,'2025-02-13',499);
+INSERT INTO "Orders" VALUES (59,3,'2025-02-14',749);
+INSERT INTO "Orders" VALUES (60,4,'2025-02-14',999);
+INSERT INTO "Orders" VALUES (61,5,'2025-02-15',599);
+INSERT INTO "Orders" VALUES (62,6,'2025-02-15',2499);
+INSERT INTO "Orders" VALUES (63,7,'2025-02-16',2299);
+INSERT INTO "Orders" VALUES (64,8,'2025-02-16',4999);
+INSERT INTO "Orders" VALUES (65,1,'2025-02-17',1499);
+INSERT INTO "Orders" VALUES (66,2,'2025-02-17',999);
+INSERT INTO "Orders" VALUES (67,3,'2025-02-18',799);
+INSERT INTO "Orders" VALUES (68,4,'2025-02-18',1199);
+INSERT INTO "Orders" VALUES (69,5,'2025-02-19',799);
+INSERT INTO "Orders" VALUES (70,6,'2025-02-19',499);
+INSERT INTO "Orders" VALUES (71,7,'2025-02-20',699);
+INSERT INTO "Orders" VALUES (72,8,'2025-02-20',1299);
+INSERT INTO "Payment" VALUES (1,1,'Visa',797);
+INSERT INTO "Payment" VALUES (2,2,'Cash on Delivery',1199);
+INSERT INTO "Payment" VALUES (3,3,'Mastercard',1798);
+INSERT INTO "Payment" VALUES (4,4,'Visa',698);
+INSERT INTO "Payment" VALUES (5,5,'Cash on Delivery',498);
+INSERT INTO "Payment" VALUES (6,6,'Mastercard',1299);
+INSERT INTO "Payment" VALUES (7,7,'Visa',1199);
+INSERT INTO "Payment" VALUES (8,8,'Cash on Delivery',848);
+INSERT INTO "Payment" VALUES (9,1,'Visa',899);
+INSERT INTO "Payment" VALUES (10,2,'Mastercard',1199);
+INSERT INTO "Payment" VALUES (11,3,'Cash on Delivery',798);
+INSERT INTO "Payment" VALUES (12,4,'Visa',349);
+INSERT INTO "Payment" VALUES (13,5,'Mastercard',699);
+INSERT INTO "Payment" VALUES (14,6,'Visa',899);
+INSERT INTO "Payment" VALUES (15,7,'Cash on Delivery',1399);
+INSERT INTO "Payment" VALUES (16,8,'Visa',1599);
+INSERT INTO "Payment" VALUES (17,1,'Visa',199);
+INSERT INTO "Payment" VALUES (18,2,'Mastercard',179);
+INSERT INTO "Payment" VALUES (19,3,'Cash on Delivery',749);
+INSERT INTO "Payment" VALUES (20,4,'Visa',699);
+INSERT INTO "Payment" VALUES (21,5,'Mastercard',499);
+INSERT INTO "Payment" VALUES (22,6,'Visa',349);
+INSERT INTO "Payment" VALUES (23,7,'Cash on Delivery',799);
+INSERT INTO "Payment" VALUES (24,8,'Visa',1299);
+INSERT INTO "Payment" VALUES (25,1,'Visa',299);
+INSERT INTO "Payment" VALUES (26,2,'Mastercard',1999);
+INSERT INTO "Payment" VALUES (27,3,'Cash',399);
+INSERT INTO "Payment" VALUES (28,4,'Visa',799);
+INSERT INTO "Payment" VALUES (29,5,'Cash',599);
+INSERT INTO "Payment" VALUES (30,6,'Visa',1799);
+INSERT INTO "Payment" VALUES (31,7,'Cash',349);
+INSERT INTO "Payment" VALUES (32,8,'Visa',899);
+INSERT INTO "Payment" VALUES (33,1,'Visa',299);
+INSERT INTO "Payment" VALUES (34,2,'Mastercard',1599);
+INSERT INTO "Payment" VALUES (35,3,'Cash',999);
+INSERT INTO "Payment" VALUES (36,4,'Visa',549);
+INSERT INTO "Payment" VALUES (37,5,'Cash',899);
+INSERT INTO "Payment" VALUES (38,6,'Visa',1099);
+INSERT INTO "Payment" VALUES (39,7,'Cash',699);
+INSERT INTO "Payment" VALUES (40,8,'Visa',499);
+INSERT INTO "Product" VALUES (1,'Ribbed Crop Top','Short ribbed cotton top',299,1);
+INSERT INTO "Product" VALUES (2,'High Waist Jeans','Denim high waist jeans',799,1);
+INSERT INTO "Product" VALUES (3,'Oversized Hoodie','Loose fit hoodie',650,2);
+INSERT INTO "Product" VALUES (4,'Slim Fit T-Shirt','Basic slim fit t-shirt',249,2);
+INSERT INTO "Product" VALUES (5,'Gold Layered Necklace','Layered fashion necklace',199,3);
+INSERT INTO "Product" VALUES (6,'Mini Crossbody Bag','Small everyday crossbody bag',549,5);
+INSERT INTO "Product" VALUES (7,'White Sneakers','Casual white sneakers',999,4);
+INSERT INTO "Product" VALUES (8,'Platform Boots','Chunky platform boots',1299,4);
+INSERT INTO "Product" VALUES (9,'Leather Tote Bag','Large leather tote bag',1199,5);
+INSERT INTO "Product" VALUES (10,'Satin Midi Skirt','Elegant satin midi skirt',499,1);
+INSERT INTO "Product" VALUES (11,'Floral Dress','Light summer floral dress',899,6);
+INSERT INTO "Product" VALUES (12,'Black Evening Dress','Elegant night dress',1199,47);
+INSERT INTO "Product" VALUES (13,'Yoga Leggings','Stretch yoga leggings',399,7);
+INSERT INTO "Product" VALUES (14,'Sports Bra','Support sports bra',349,7);
+INSERT INTO "Product" VALUES (15,'Silk Pajama Set','Soft silk pajamas',699,42);
+INSERT INTO "Product" VALUES (16,'Denim Jacket','Classic denim jacket',899,32);
+INSERT INTO "Product" VALUES (17,'Leather Jacket','Faux leather jacket',1399,32);
+INSERT INTO "Product" VALUES (18,'Wool Coat','Warm winter coat',1599,31);
+INSERT INTO "Product" VALUES (19,'Basic White Tee','Cotton t-shirt',199,15);
+INSERT INTO "Product" VALUES (20,'Ribbed Tank','Ribbed tank top',179,27);
+INSERT INTO "Product" VALUES (21,'Mom Jeans','Relaxed fit jeans',749,9);
+INSERT INTO "Product" VALUES (22,'Skinny Jeans','Skinny denim jeans',699,9);
+INSERT INTO "Product" VALUES (23,'Pleated Skirt','Midi pleated skirt',499,37);
+INSERT INTO "Product" VALUES (24,'Mini Skirt','Short casual skirt',349,37);
+INSERT INTO "Product" VALUES (25,'Wide Leg Pants','Wide leg trousers',799,28);
+INSERT INTO "Product" VALUES (26,'Office Blazer','Formal blazer',1299,33);
+INSERT INTO "Product" VALUES (27,'Cardigan','Soft knit cardigan',599,34);
+INSERT INTO "Product" VALUES (28,'Oversized Sweater','Warm oversized sweater',749,35);
+INSERT INTO "Product" VALUES (29,'Hoodie','Casual hoodie',649,14);
+INSERT INTO "Product" VALUES (30,'Joggers','Comfort jogger pants',499,30);
+INSERT INTO "Product" VALUES (31,'Lounge Set','Matching lounge set',899,29);
+INSERT INTO "Product" VALUES (32,'Bikini Set','Two piece bikini',699,12);
+INSERT INTO "Product" VALUES (33,'Swim Shorts','Men swim shorts',499,12);
+INSERT INTO "Product" VALUES (34,'Beach Cover','Light beach cover',399,44);
+INSERT INTO "Product" VALUES (35,'Sneakers','Casual sneakers',999,4);
+INSERT INTO "Product" VALUES (36,'Running Shoes','Running sneakers',1299,4);
+INSERT INTO "Product" VALUES (37,'High Heels','Classic heels',1199,21);
+INSERT INTO "Product" VALUES (38,'Flat Sandals','Summer sandals',549,22);
+INSERT INTO "Product" VALUES (39,'Ankle Boots','Leather ankle boots',1399,23);
+INSERT INTO "Product" VALUES (40,'Backpack','Everyday backpack',799,24);
+INSERT INTO "Product" VALUES (41,'Mini Backpack','Small backpack',649,24);
+INSERT INTO "Product" VALUES (42,'Wallet','Slim wallet',299,25);
+INSERT INTO "Product" VALUES (43,'Clutch Bag','Evening clutch',499,26);
+INSERT INTO "Product" VALUES (44,'Gold Necklace','Fashion necklace',249,16);
+INSERT INTO "Product" VALUES (45,'Silver Ring','Minimal ring',199,16);
+INSERT INTO "Product" VALUES (46,'Baseball Cap','Casual cap',199,17);
+INSERT INTO "Product" VALUES (47,'Wide Belt','Leather belt',349,18);
+INSERT INTO "Product" VALUES (48,'Silk Scarf','Printed scarf',299,19);
+INSERT INTO "Product" VALUES (49,'Sunglasses','UV sunglasses',399,20);
+INSERT INTO "Product" VALUES (50,'Basic Socks','Cotton socks',99,39);
+INSERT INTO "Product" VALUES (51,'Sports Socks','Athletic socks',129,39);
+INSERT INTO "Product" VALUES (52,'Bra Set','Comfort bra set',399,41);
+INSERT INTO "Product" VALUES (53,'Cotton Underwear','Everyday underwear',149,40);
+INSERT INTO "Product" VALUES (54,'Sleep Robe','Soft robe',599,43);
+INSERT INTO "Product" VALUES (55,'Party Dress','Shiny party dress',1299,47);
+INSERT INTO "Product" VALUES (56,'Casual Shirt','Relaxed shirt',449,48);
+INSERT INTO "Product" VALUES (57,'Formal Shirt','Office shirt',699,46);
+INSERT INTO "Product" VALUES (58,'Travel Hoodie','Zip hoodie',799,49);
+INSERT INTO "Product" VALUES (59,'Seasonal Sweater','Holiday sweater',899,50);
+INSERT INTO "Product" VALUES (60,'Crop Hoodie','Short hoodie',599,14);
+INSERT INTO "Product" VALUES (61,'Eco Cotton Tee','Organic cotton t-shirt',299,51);
+INSERT INTO "Product" VALUES (62,'Luxury Satin Dress','Premium satin dress',1999,52);
+INSERT INTO "Product" VALUES (63,'Kids Hoodie','Warm kids hoodie',399,53);
+INSERT INTO "Product" VALUES (64,'Maternity Jeans','Comfort maternity jeans',799,54);
+INSERT INTO "Product" VALUES (65,'School Uniform','Standard school uniform',599,55);
+INSERT INTO "Product" VALUES (66,'Winter Parka','Heavy winter parka',1799,56);
+INSERT INTO "Product" VALUES (67,'Summer Shorts','Light summer shorts',349,57);
+INSERT INTO "Product" VALUES (68,'Rain Jacket','Waterproof jacket',899,58);
+INSERT INTO "Product" VALUES (69,'Plus Size Tee','Comfort plus tee',299,59);
+INSERT INTO "Product" VALUES (70,'Limited Jacket','Limited edition jacket',1599,60);
+INSERT INTO "Product" VALUES (71,'Athleisure Set','Comfort sport set',999,61);
+INSERT INTO "Product" VALUES (72,'Minimal Shirt','Clean minimal shirt',549,62);
+INSERT INTO "Product" VALUES (73,'Boho Dress','Bohemian dress',899,63);
+INSERT INTO "Product" VALUES (74,'Vintage Jeans','Retro denim jeans',1099,64);
+INSERT INTO "Product" VALUES (75,'Urban Hoodie','Street hoodie',699,65);
+INSERT INTO "Product" VALUES (76,'Festival Top','Festival style top',499,66);
+INSERT INTO "Product" VALUES (77,'Gym Tank','Gym training tank',249,67);
+INSERT INTO "Product" VALUES (78,'Yoga Pants','Flexible yoga pants',399,68);
+INSERT INTO "Product" VALUES (79,'Cycling Shorts','Padded cycling shorts',449,69);
+INSERT INTO "Product" VALUES (80,'Running Tee','Breathable running tee',349,70);
+INSERT INTO "Product" VALUES (81,'Classic Coat','Classic long coat',1499,71);
+INSERT INTO "Product" VALUES (82,'Modern Blazer','Modern cut blazer',1299,72);
+INSERT INTO "Product" VALUES (83,'Statement Jacket','Bold statement jacket',1799,73);
+INSERT INTO "Product" VALUES (84,'Trendy Skirt','Trending skirt',499,74);
+INSERT INTO "Product" VALUES (85,'Essential Tee','Everyday tee',199,75);
+INSERT INTO "Product" VALUES (86,'Daily Pants','Daily wear pants',499,76);
+INSERT INTO "Product" VALUES (87,'Comfort Hoodie','Ultra soft hoodie',749,77);
+INSERT INTO "Product" VALUES (88,'Premium Shirt','Premium cotton shirt',999,78);
+INSERT INTO "Product" VALUES (89,'Budget Jeans','Affordable jeans',599,79);
+INSERT INTO "Product" VALUES (90,'Luxury Handbag','Luxury leather bag',2499,80);
+INSERT INTO "Product" VALUES (91,'Luxury Heels','Luxury heels',2299,81);
+INSERT INTO "Product" VALUES (92,'Diamond Necklace','Luxury necklace',4999,82);
+INSERT INTO "Product" VALUES (93,'Formal Shoes','Formal leather shoes',1499,83);
+INSERT INTO "Product" VALUES (94,'Casual Sneakers','Casual sneakers',999,84);
+INSERT INTO "Product" VALUES (95,'Office Backpack','Office backpack',799,85);
+INSERT INTO "Product" VALUES (96,'Travel Duffel','Large travel bag',1199,86);
+INSERT INTO "Product" VALUES (97,'Smart Shirt','Smart casual shirt',799,87);
+INSERT INTO "Product" VALUES (98,'Home Pajama','Comfort home pajama',499,88);
+INSERT INTO "Product" VALUES (99,'Night Gown','Soft night gown',699,89);
+INSERT INTO "Product" VALUES (100,'Outdoor Jacket','Outdoor wind jacket',1299,90);
+INSERT INTO "Review" VALUES (1,1,1,5,'Great quality and fit');
+INSERT INTO "Review" VALUES (2,2,6,4,'Nice bag but a bit small');
+INSERT INTO "Review" VALUES (3,3,7,5,'Very comfortable shoes');
+INSERT INTO "Review" VALUES (4,4,10,4,'Elegant and stylish');
+INSERT INTO "Review" VALUES (5,5,4,3,'Good but material is thin');
+INSERT INTO "Review" VALUES (6,6,8,5,'Looks amazing');
+INSERT INTO "Review" VALUES (7,7,9,4,'Spacious and durable');
+INSERT INTO "Review" VALUES (8,8,2,5,'Perfect jeans');
+INSERT INTO "Review" VALUES (9,1,11,5,'Loved the fabric');
+INSERT INTO "Review" VALUES (10,2,12,4,'Very elegant');
+INSERT INTO "Review" VALUES (11,3,13,5,'Perfect for gym');
+INSERT INTO "Review" VALUES (12,4,14,4,'Good support');
+INSERT INTO "Review" VALUES (13,5,15,5,'Very comfortable');
+INSERT INTO "Review" VALUES (14,6,16,4,'Nice quality');
+INSERT INTO "Review" VALUES (15,7,17,5,'Looks amazing');
+INSERT INTO "Review" VALUES (16,8,18,4,'Warm and cozy');
+INSERT INTO "Review" VALUES (17,1,19,3,'Basic tee');
+INSERT INTO "Review" VALUES (18,2,20,4,'Nice fit');
+INSERT INTO "Review" VALUES (19,3,21,5,'Great jeans');
+INSERT INTO "Review" VALUES (20,4,22,4,'Good stretch');
+INSERT INTO "Review" VALUES (21,1,61,5,'Excellent');
+INSERT INTO "Review" VALUES (22,2,62,5,'Premium quality');
+INSERT INTO "Review" VALUES (23,3,63,4,'Kids loved it');
+INSERT INTO "Review" VALUES (24,4,64,5,'Very comfortable');
+INSERT INTO "Review" VALUES (25,5,65,4,'Good quality');
+INSERT INTO "Review" VALUES (26,6,66,5,'Very warm');
+INSERT INTO "Review" VALUES (27,7,67,4,'Nice fabric');
+INSERT INTO "Review" VALUES (28,8,68,5,'Waterproof works');
+INSERT INTO "Review" VALUES (29,1,69,4,'Comfortable');
+INSERT INTO "Review" VALUES (30,2,70,5,'Limited and stylish');
+INSERT INTO "Tracking_Detail" VALUES (1,1);
+INSERT INTO "Tracking_Detail" VALUES (2,2);
+INSERT INTO "Tracking_Detail" VALUES (3,3);
+INSERT INTO "Tracking_Detail" VALUES (4,4);
+INSERT INTO "Tracking_Detail" VALUES (5,5);
+INSERT INTO "Tracking_Detail" VALUES (6,6);
+INSERT INTO "Tracking_Detail" VALUES (7,7);
+INSERT INTO "Tracking_Detail" VALUES (8,8);
+INSERT INTO "Tracking_Detail" VALUES (9,9);
+INSERT INTO "Tracking_Detail" VALUES (10,10);
+INSERT INTO "Tracking_Detail" VALUES (11,11);
+INSERT INTO "Tracking_Detail" VALUES (12,12);
+INSERT INTO "Tracking_Detail" VALUES (13,13);
+INSERT INTO "Tracking_Detail" VALUES (14,14);
+INSERT INTO "Tracking_Detail" VALUES (15,15);
+INSERT INTO "Tracking_Detail" VALUES (16,16);
+INSERT INTO "Tracking_Detail" VALUES (17,17);
+INSERT INTO "Tracking_Detail" VALUES (18,18);
+INSERT INTO "Tracking_Detail" VALUES (19,19);
+INSERT INTO "Tracking_Detail" VALUES (20,20);
+INSERT INTO "Tracking_Detail" VALUES (21,21);
+INSERT INTO "Tracking_Detail" VALUES (22,22);
+INSERT INTO "Tracking_Detail" VALUES (23,23);
+INSERT INTO "Tracking_Detail" VALUES (24,24);
+INSERT INTO "Tracking_Detail" VALUES (25,25);
+INSERT INTO "Tracking_Detail" VALUES (26,26);
+INSERT INTO "Tracking_Detail" VALUES (27,27);
+INSERT INTO "Tracking_Detail" VALUES (28,28);
+INSERT INTO "Tracking_Detail" VALUES (29,29);
+INSERT INTO "Tracking_Detail" VALUES (30,30);
+INSERT INTO "Tracking_Detail" VALUES (31,31);
+INSERT INTO "Tracking_Detail" VALUES (32,32);
+INSERT INTO "Tracking_Detail" VALUES (33,33);
+INSERT INTO "Tracking_Detail" VALUES (34,34);
+INSERT INTO "Tracking_Detail" VALUES (35,35);
+INSERT INTO "Tracking_Detail" VALUES (36,36);
+INSERT INTO "Tracking_Detail" VALUES (37,37);
+INSERT INTO "Tracking_Detail" VALUES (38,38);
+INSERT INTO "Tracking_Detail" VALUES (39,39);
+INSERT INTO "Tracking_Detail" VALUES (40,40);
+INSERT INTO "Tracking_Detail" VALUES (41,41);
+INSERT INTO "Tracking_Detail" VALUES (42,42);
+INSERT INTO "Tracking_Detail" VALUES (43,43);
+INSERT INTO "Tracking_Detail" VALUES (44,44);
+INSERT INTO "Tracking_Detail" VALUES (45,45);
+INSERT INTO "Tracking_Detail" VALUES (46,46);
+INSERT INTO "Tracking_Detail" VALUES (47,47);
+INSERT INTO "Tracking_Detail" VALUES (48,48);
+INSERT INTO "Tracking_Detail" VALUES (49,49);
+INSERT INTO "Tracking_Detail" VALUES (50,50);
+INSERT INTO "Tracking_Detail" VALUES (51,51);
+INSERT INTO "Tracking_Detail" VALUES (52,52);
+INSERT INTO "Tracking_Detail" VALUES (53,53);
+INSERT INTO "Tracking_Detail" VALUES (54,54);
+INSERT INTO "Tracking_Detail" VALUES (55,55);
+INSERT INTO "Tracking_Detail" VALUES (56,56);
+INSERT INTO "Tracking_Detail" VALUES (57,57);
+INSERT INTO "Tracking_Detail" VALUES (58,58);
+INSERT INTO "Tracking_Detail" VALUES (59,59);
+INSERT INTO "Tracking_Detail" VALUES (60,60);
+INSERT INTO "Tracking_Detail" VALUES (61,61);
+INSERT INTO "Tracking_Detail" VALUES (62,62);
+INSERT INTO "Tracking_Detail" VALUES (63,63);
+INSERT INTO "Tracking_Detail" VALUES (64,64);
+INSERT INTO "User" VALUES (1,'Mariam','Ali','mariam.ali@gmail.com','K9@fT2xQ!','01055544321');
+INSERT INTO "User" VALUES (2,'Nour','Ahmed','nour.ahmed@gmail.com','mP#7Zq!3L','01122233445');
+INSERT INTO "User" VALUES (3,'Yara','Hossam','yara.hossam@gmail.com','R8$wA1e@K','01299988776');
+INSERT INTO "User" VALUES (4,'Lina','Fathy','lina.fathy@gmail.com','T!9xQ2M$h','01077889911');
+INSERT INTO "User" VALUES (5,'Dina','Samir','dina.samir@gmail.com','A7@Dk3P!x','01133445566');
+INSERT INTO "User" VALUES (6,'Salma','Youssef','salma.youssef@gmail.com','Z#4M!Q9sE','01222334455');
+INSERT INTO "User" VALUES (7,'Farah','Omar','farah.omar@gmail.com','8W@xL!2QK','01044556677');
+INSERT INTO "User" VALUES (8,'Menna','Ashraf','menna.ashraf@gmail.com','P@5T7!mZQ','01188990011');
+INSERT INTO "User" VALUES (9,'User9','Test','user9@test.com','pass9','+20100000009');
+INSERT INTO "User" VALUES (10,'User10','Test','user10@test.com','pass10','+20100000010');
+INSERT INTO "User" VALUES (11,'User11','Test','user11@test.com','pass11','+20100000011');
+INSERT INTO "User" VALUES (12,'User12','Test','user12@test.com','pass12','+20100000012');
+INSERT INTO "User" VALUES (13,'User13','Test','user13@test.com','pass13','+20100000013');
+INSERT INTO "User" VALUES (14,'User14','Test','user14@test.com','pass14','+20100000014');
+INSERT INTO "User" VALUES (15,'User15','Test','user15@test.com','pass15','+20100000015');
+INSERT INTO "User" VALUES (16,'User16','Test','user16@test.com','pass16','+20100000016');
+INSERT INTO "User" VALUES (17,'User17','Test','user17@test.com','pass17','+20100000017');
+INSERT INTO "User" VALUES (18,'User18','Test','user18@test.com','pass18','+20100000018');
+INSERT INTO "User" VALUES (19,'User19','Test','user19@test.com','pass19','+20100000019');
+INSERT INTO "User" VALUES (20,'User20','Test','user20@test.com','pass20','+20100000020');
+INSERT INTO "User" VALUES (21,'User21','Test','user21@test.com','pass21','+20100000021');
+INSERT INTO "User" VALUES (22,'User22','Test','user22@test.com','pass22','+20100000022');
+INSERT INTO "User" VALUES (23,'User23','Test','user23@test.com','pass23','+20100000023');
+INSERT INTO "User" VALUES (24,'User24','Test','user24@test.com','pass24','+20100000024');
+INSERT INTO "User" VALUES (25,'User25','Test','user25@test.com','pass25','+20100000025');
+INSERT INTO "User" VALUES (26,'User26','Test','user26@test.com','pass26','+20100000026');
+INSERT INTO "User" VALUES (27,'User27','Test','user27@test.com','pass27','+20100000027');
+INSERT INTO "User" VALUES (28,'User28','Test','user28@test.com','pass28','+20100000028');
+INSERT INTO "User" VALUES (29,'User29','Test','user29@test.com','pass29','+20100000029');
+INSERT INTO "User" VALUES (30,'User30','Test','user30@test.com','pass30','+20100000030');
+INSERT INTO "User" VALUES (31,'User31','Test','user31@test.com','pass31','+20100000031');
+INSERT INTO "User" VALUES (32,'User32','Test','user32@test.com','pass32','+20100000032');
+INSERT INTO "User" VALUES (33,'User33','Test','user33@test.com','pass33','+20100000033');
+INSERT INTO "User" VALUES (34,'User34','Test','user34@test.com','pass34','+20100000034');
+INSERT INTO "User" VALUES (35,'User35','Test','user35@test.com','pass35','+20100000035');
+INSERT INTO "User" VALUES (36,'User36','Test','user36@test.com','pass36','+20100000036');
+INSERT INTO "User" VALUES (37,'User37','Test','user37@test.com','pass37','+20100000037');
+INSERT INTO "User" VALUES (38,'User38','Test','user38@test.com','pass38','+20100000038');
+INSERT INTO "User" VALUES (39,'User39','Test','user39@test.com','pass39','+20100000039');
+INSERT INTO "User" VALUES (40,'User40','Test','user40@test.com','pass40','+20100000040');
+INSERT INTO "User" VALUES (41,'User41','Test','user41@test.com','pass41','+20100000041');
+INSERT INTO "User" VALUES (42,'User42','Test','user42@test.com','pass42','+20100000042');
+INSERT INTO "User" VALUES (43,'User43','Test','user43@test.com','pass43','+20100000043');
+INSERT INTO "User" VALUES (44,'User44','Test','user44@test.com','pass44','+20100000044');
+INSERT INTO "User" VALUES (45,'User45','Test','user45@test.com','pass45','+20100000045');
+INSERT INTO "User" VALUES (46,'User46','Test','user46@test.com','pass46','+20100000046');
+INSERT INTO "User" VALUES (47,'User47','Test','user47@test.com','pass47','+20100000047');
+INSERT INTO "User" VALUES (48,'User48','Test','user48@test.com','pass48','+20100000048');
+INSERT INTO "User" VALUES (49,'User49','Test','user49@test.com','pass49','+20100000049');
+INSERT INTO "User" VALUES (50,'User50','Test','user50@test.com','pass50','+20100000050');
+INSERT INTO "User" VALUES (51,'User51','Test','user51@test.com','pass51','+20100000051');
+INSERT INTO "User" VALUES (52,'User52','Test','user52@test.com','pass52','+20100000052');
+INSERT INTO "User" VALUES (53,'User53','Test','user53@test.com','pass53','+20100000053');
+INSERT INTO "User" VALUES (54,'User54','Test','user54@test.com','pass54','+20100000054');
+INSERT INTO "User" VALUES (55,'User55','Test','user55@test.com','pass55','+20100000055');
+INSERT INTO "User" VALUES (56,'User56','Test','user56@test.com','pass56','+20100000056');
+INSERT INTO "User" VALUES (57,'User57','Test','user57@test.com','pass57','+20100000057');
+INSERT INTO "User" VALUES (58,'User58','Test','user58@test.com','pass58','+20100000058');
+INSERT INTO "User" VALUES (59,'User59','Test','user59@test.com','pass59','+20100000059');
+INSERT INTO "User" VALUES (60,'User60','Test','user60@test.com','pass60','+20100000060');
+INSERT INTO "User" VALUES (61,'User61','Test','user61@test.com','pass61','+20100000061');
+INSERT INTO "User" VALUES (62,'User62','Test','user62@test.com','pass62','+20100000062');
+INSERT INTO "User" VALUES (63,'User63','Test','user63@test.com','pass63','+20100000063');
+INSERT INTO "User" VALUES (64,'User64','Test','user64@test.com','pass64','+20100000064');
+INSERT INTO "User" VALUES (65,'User65','Test','user65@test.com','pass65','+20100000065');
+INSERT INTO "User" VALUES (66,'User66','Test','user66@test.com','pass66','+20100000066');
+INSERT INTO "User" VALUES (67,'User67','Test','user67@test.com','pass67','+20100000067');
+INSERT INTO "User" VALUES (68,'User68','Test','user68@test.com','pass68','+20100000068');
+INSERT INTO "User" VALUES (69,'User69','Test','user69@test.com','pass69','+20100000069');
+INSERT INTO "User" VALUES (70,'User70','Test','user70@test.com','pass70','+20100000070');
+INSERT INTO "User" VALUES (71,'User71','Test','user71@test.com','pass71','+20100000071');
+INSERT INTO "User" VALUES (72,'User72','Test','user72@test.com','pass72','+20100000072');
+INSERT INTO "User" VALUES (73,'User73','Test','user73@test.com','pass73','+20100000073');
+INSERT INTO "User" VALUES (74,'User74','Test','user74@test.com','pass74','+20100000074');
+INSERT INTO "User" VALUES (75,'User75','Test','user75@test.com','pass75','+20100000075');
+INSERT INTO "User" VALUES (76,'User76','Test','user76@test.com','pass76','+20100000076');
+INSERT INTO "User" VALUES (77,'User77','Test','user77@test.com','pass77','+20100000077');
+INSERT INTO "User" VALUES (78,'User78','Test','user78@test.com','pass78','+20100000078');
+INSERT INTO "User" VALUES (79,'User79','Test','user79@test.com','pass79','+20100000079');
+INSERT INTO "User" VALUES (80,'User80','Test','user80@test.com','pass80','+20100000080');
+INSERT INTO "User" VALUES (81,'User81','Test','user81@test.com','pass81','+20100000081');
+INSERT INTO "User" VALUES (82,'User82','Test','user82@test.com','pass82','+20100000082');
+INSERT INTO "User" VALUES (83,'User83','Test','user83@test.com','pass83','+20100000083');
+INSERT INTO "User" VALUES (84,'User84','Test','user84@test.com','pass84','+20100000084');
+INSERT INTO "User" VALUES (85,'User85','Test','user85@test.com','pass85','+20100000085');
+INSERT INTO "User" VALUES (86,'User86','Test','user86@test.com','pass86','+20100000086');
+INSERT INTO "User" VALUES (87,'User87','Test','user87@test.com','pass87','+20100000087');
+INSERT INTO "User" VALUES (88,'User88','Test','user88@test.com','pass88','+20100000088');
+INSERT INTO "User" VALUES (89,'User89','Test','user89@test.com','pass89','+20100000089');
+INSERT INTO "User" VALUES (90,'User90','Test','user90@test.com','pass90','+20100000090');
+INSERT INTO "User" VALUES (91,'User91','Test','user91@test.com','pass91','+20100000091');
+INSERT INTO "User" VALUES (92,'User92','Test','user92@test.com','pass92','+20100000092');
+INSERT INTO "User" VALUES (93,'User93','Test','user93@test.com','pass93','+20100000093');
+INSERT INTO "User" VALUES (94,'User94','Test','user94@test.com','pass94','+20100000094');
+INSERT INTO "User" VALUES (95,'User95','Test','user95@test.com','pass95','+20100000095');
+INSERT INTO "User" VALUES (96,'User96','Test','user96@test.com','pass96','+20100000096');
+INSERT INTO "User" VALUES (97,'User97','Test','user97@test.com','pass97','+20100000097');
+INSERT INTO "User" VALUES (98,'User98','Test','user98@test.com','pass98','+20100000098');
+INSERT INTO "User" VALUES (99,'User99','Test','user99@test.com','pass99','+20100000099');
+INSERT INTO "User" VALUES (100,'User100','Test','user100@test.com','pass100','+20100000100');
+INSERT INTO "User" VALUES (101,'User101','Test','user101@test.com','pass101','+20100000101');
+INSERT INTO "User" VALUES (102,'User102','Test','user102@test.com','pass102','+20100000102');
+INSERT INTO "User" VALUES (103,'User103','Test','user103@test.com','pass103','+20100000103');
+INSERT INTO "User" VALUES (104,'User104','Test','user104@test.com','pass104','+20100000104');
+INSERT INTO "User" VALUES (105,'User105','Test','user105@test.com','pass105','+20100000105');
+INSERT INTO "User" VALUES (106,'User106','Test','user106@test.com','pass106','+20100000106');
+INSERT INTO "User" VALUES (107,'User107','Test','user107@test.com','pass107','+20100000107');
+INSERT INTO "User" VALUES (108,'User108','Test','user108@test.com','pass108','+20100000108');
+INSERT INTO "User" VALUES (109,'User109','Test','user109@test.com','pass109','+20100000109');
+INSERT INTO "User" VALUES (110,'User110','Test','user110@test.com','pass110','+20100000110');
+INSERT INTO "admin" VALUES (NULL,'admin1@store.com','Main Admin','X9@Q2!Lm8','Super Admin');
+INSERT INTO "admin" VALUES (NULL,'admin2@store.com','Store Manager','A7!Kp@9Z','Manager');
+INSERT INTO "admin" VALUES (NULL,'admin3@store.com','Inventory Admin','Q8!Zp2@L','Admin');
+INSERT INTO "admin" VALUES (NULL,'admin4@store.com','Sales Admin','M9@X!4Kp','Admin');
+INSERT INTO "admin" VALUES (NULL,'admin5@store.com','Support Admin','A7!QZ9Lp','Support');
+INSERT INTO "admin" VALUES (NULL,'admin6@store.com','Finance Admin','F8@Qp!29','Admin');
+INSERT INTO "admin" VALUES (NULL,'admin7@store.com','Marketing Admin','M7!XpQ9','Admin');
+INSERT INTO "admin" VALUES (NULL,'admin8@store.com','Ops Admin','O9@!QXp','Admin');
+COMMIT;

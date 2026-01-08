@@ -1,0 +1,204 @@
+BEGIN TRANSACTION;
+CREATE TABLE IF NOT EXISTS "Address" (
+	"address_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"city"	VARCHAR(50),
+	"state"	VARCHAR(50),
+	"country"	VARCHAR(50),
+	CONSTRAINT "Address_PK" PRIMARY KEY("address_id"),
+	CONSTRAINT "Address_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Cart" (
+	"cart_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	CONSTRAINT "Cart_PK" PRIMARY KEY("cart_id"),
+	CONSTRAINT "Cart_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Cart_Product" (
+	"cart_id"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	CONSTRAINT "Cart_Product_PK" PRIMARY KEY("cart_id","product_id"),
+	CONSTRAINT "CP_Cart_FK" FOREIGN KEY("cart_id") REFERENCES "Cart"("cart_id"),
+	CONSTRAINT "CP_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id")
+);
+CREATE TABLE IF NOT EXISTS "Category" (
+	"category_id"	INT NOT NULL,
+	"name"	VARCHAR(50),
+	CONSTRAINT "Category_PK" PRIMARY KEY("category_id")
+);
+CREATE TABLE IF NOT EXISTS "Discount" (
+	"discount_id"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	"discount_code"	VARCHAR(6),
+	"percentage"	DECIMAL(5, 2),
+	"expiry_date"	DATE,
+	CONSTRAINT "Discount_PK" PRIMARY KEY("discount_id"),
+	CONSTRAINT "Discount_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id")
+);
+CREATE TABLE IF NOT EXISTS "Order_Product" (
+	"order_no"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	CONSTRAINT "Order_Product_PK" PRIMARY KEY("order_no","product_id"),
+	CONSTRAINT "OP_Order_FK" FOREIGN KEY("order_no") REFERENCES "Orders"("order_no"),
+	CONSTRAINT "OP_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id")
+);
+CREATE TABLE IF NOT EXISTS "Orders" (
+	"order_no"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"order_date"	DATE,
+	"order_amount"	DECIMAL(10, 2),
+	CONSTRAINT "Orders_PK" PRIMARY KEY("order_no"),
+	CONSTRAINT "Orders_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Payment" (
+	"payment_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"payment_method"	VARCHAR(50),
+	"payment_amount"	DECIMAL(10, 2),
+	CONSTRAINT "Payment_PK" PRIMARY KEY("payment_id"),
+	CONSTRAINT "Payment_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Product" (
+	"product_id"	INT NOT NULL,
+	"name"	VARCHAR(100),
+	"description"	VARCHAR(255),
+	"price"	DECIMAL(10, 2),
+	"category_id"	INT NOT NULL,
+	CONSTRAINT "Product_PK" PRIMARY KEY("product_id"),
+	CONSTRAINT "Product_Category_FK" FOREIGN KEY("category_id") REFERENCES "Category"("category_id")
+);
+CREATE TABLE IF NOT EXISTS "Review" (
+	"review_id"	INT NOT NULL,
+	"user_id"	INT NOT NULL,
+	"product_id"	INT NOT NULL,
+	"rating"	INT,
+	"comments"	VARCHAR(255),
+	CONSTRAINT "Review_PK" PRIMARY KEY("review_id"),
+	CONSTRAINT "Review_Product_FK" FOREIGN KEY("product_id") REFERENCES "Product"("product_id"),
+	CONSTRAINT "Review_User_FK" FOREIGN KEY("user_id") REFERENCES "User"("user_id")
+);
+CREATE TABLE IF NOT EXISTS "Tracking_Detail" (
+	"tracking_id"	INT NOT NULL,
+	"order_no"	INT NOT NULL,
+	CONSTRAINT "Tracking_PK" PRIMARY KEY("tracking_id"),
+	CONSTRAINT "Tracking_Order_FK" FOREIGN KEY("order_no") REFERENCES "Orders"("order_no")
+);
+CREATE TABLE IF NOT EXISTS "User" (
+	"user_id"	INT NOT NULL,
+	"first_name"	VARCHAR(50),
+	"last_name"	VARCHAR(50),
+	"email"	VARCHAR(100),
+	"password"	VARCHAR(100),
+	"phone"	VARCHAR(20),
+	CONSTRAINT "User_email_UQ" UNIQUE("email"),
+	CONSTRAINT "User_PK" PRIMARY KEY("user_id")
+);
+CREATE TABLE IF NOT EXISTS "admin" (
+	"admin_id"	INT AUTO_INCREMENT,
+	"email"	VARCHAR(255) NOT NULL UNIQUE,
+	"name"	VARCHAR(100) NOT NULL,
+	"password"	VARCHAR(255) NOT NULL,
+	"role"	VARCHAR(50) NOT NULL,
+	PRIMARY KEY("admin_id")
+);
+INSERT INTO "Address" VALUES (1,1,'Cairo','New Cairo','Egypt');
+INSERT INTO "Address" VALUES (2,2,'Giza','6th of October','Egypt');
+INSERT INTO "Address" VALUES (3,3,'Alexandria','Stanley','Egypt');
+INSERT INTO "Address" VALUES (4,4,'Cairo','Heliopolis','Egypt');
+INSERT INTO "Address" VALUES (5,5,'Giza','Sheikh Zayed','Egypt');
+INSERT INTO "Address" VALUES (6,6,'Alexandria','Smouha','Egypt');
+INSERT INTO "Address" VALUES (7,7,'Cairo','Nasr City','Egypt');
+INSERT INTO "Address" VALUES (8,8,'Giza','Haram','Egypt');
+INSERT INTO "Cart" VALUES (1,1);
+INSERT INTO "Cart" VALUES (2,2);
+INSERT INTO "Cart" VALUES (3,3);
+INSERT INTO "Cart" VALUES (4,4);
+INSERT INTO "Cart" VALUES (5,5);
+INSERT INTO "Cart" VALUES (6,6);
+INSERT INTO "Cart" VALUES (7,7);
+INSERT INTO "Cart" VALUES (8,8);
+INSERT INTO "Cart_Product" VALUES (1,1);
+INSERT INTO "Cart_Product" VALUES (1,5);
+INSERT INTO "Cart_Product" VALUES (2,3);
+INSERT INTO "Cart_Product" VALUES (2,6);
+INSERT INTO "Cart_Product" VALUES (3,2);
+INSERT INTO "Cart_Product" VALUES (3,7);
+INSERT INTO "Cart_Product" VALUES (4,10);
+INSERT INTO "Cart_Product" VALUES (5,4);
+INSERT INTO "Cart_Product" VALUES (6,8);
+INSERT INTO "Cart_Product" VALUES (7,9);
+INSERT INTO "Cart_Product" VALUES (8,1);
+INSERT INTO "Category" VALUES (1,'Women Clothing');
+INSERT INTO "Category" VALUES (2,'Men Clothing');
+INSERT INTO "Category" VALUES (3,'Accessories');
+INSERT INTO "Category" VALUES (4,'Shoes');
+INSERT INTO "Category" VALUES (5,'Bags');
+INSERT INTO "Discount" VALUES (1,1,'SAVE10',10,'2025-02-01');
+INSERT INTO "Discount" VALUES (2,3,'HOOD15',15,'2025-02-10');
+INSERT INTO "Discount" VALUES (3,7,'SHOE20',20,'2025-03-01');
+INSERT INTO "Discount" VALUES (4,6,'BAG5',5,'2025-01-31');
+INSERT INTO "Order_Product" VALUES (1,1);
+INSERT INTO "Order_Product" VALUES (1,5);
+INSERT INTO "Order_Product" VALUES (2,6);
+INSERT INTO "Order_Product" VALUES (3,2);
+INSERT INTO "Order_Product" VALUES (3,7);
+INSERT INTO "Order_Product" VALUES (4,10);
+INSERT INTO "Order_Product" VALUES (4,5);
+INSERT INTO "Order_Product" VALUES (5,4);
+INSERT INTO "Order_Product" VALUES (6,8);
+INSERT INTO "Order_Product" VALUES (7,9);
+INSERT INTO "Order_Product" VALUES (8,1);
+INSERT INTO "Order_Product" VALUES (8,6);
+INSERT INTO "Orders" VALUES (1,1,'2025-01-10',797);
+INSERT INTO "Orders" VALUES (2,2,'2025-01-11',1199);
+INSERT INTO "Orders" VALUES (3,3,'2025-01-12',1798);
+INSERT INTO "Orders" VALUES (4,4,'2025-01-13',698);
+INSERT INTO "Orders" VALUES (5,5,'2025-01-14',498);
+INSERT INTO "Orders" VALUES (6,6,'2025-01-15',1299);
+INSERT INTO "Orders" VALUES (7,7,'2025-01-16',1199);
+INSERT INTO "Orders" VALUES (8,8,'2025-01-17',848);
+INSERT INTO "Payment" VALUES (1,1,'Visa',797);
+INSERT INTO "Payment" VALUES (2,2,'Cash on Delivery',1199);
+INSERT INTO "Payment" VALUES (3,3,'Mastercard',1798);
+INSERT INTO "Payment" VALUES (4,4,'Visa',698);
+INSERT INTO "Payment" VALUES (5,5,'Cash on Delivery',498);
+INSERT INTO "Payment" VALUES (6,6,'Mastercard',1299);
+INSERT INTO "Payment" VALUES (7,7,'Visa',1199);
+INSERT INTO "Payment" VALUES (8,8,'Cash on Delivery',848);
+INSERT INTO "Product" VALUES (1,'Ribbed Crop Top','Short ribbed cotton top',299,1);
+INSERT INTO "Product" VALUES (2,'High Waist Jeans','Denim high waist jeans',799,1);
+INSERT INTO "Product" VALUES (3,'Oversized Hoodie','Loose fit hoodie',650,2);
+INSERT INTO "Product" VALUES (4,'Slim Fit T-Shirt','Basic slim fit t-shirt',249,2);
+INSERT INTO "Product" VALUES (5,'Gold Layered Necklace','Layered fashion necklace',199,3);
+INSERT INTO "Product" VALUES (6,'Mini Crossbody Bag','Small everyday crossbody bag',549,5);
+INSERT INTO "Product" VALUES (7,'White Sneakers','Casual white sneakers',999,4);
+INSERT INTO "Product" VALUES (8,'Platform Boots','Chunky platform boots',1299,4);
+INSERT INTO "Product" VALUES (9,'Leather Tote Bag','Large leather tote bag',1199,5);
+INSERT INTO "Product" VALUES (10,'Satin Midi Skirt','Elegant satin midi skirt',499,1);
+INSERT INTO "Review" VALUES (1,1,1,5,'Great quality and fit');
+INSERT INTO "Review" VALUES (2,2,6,4,'Nice bag but a bit small');
+INSERT INTO "Review" VALUES (3,3,7,5,'Very comfortable shoes');
+INSERT INTO "Review" VALUES (4,4,10,4,'Elegant and stylish');
+INSERT INTO "Review" VALUES (5,5,4,3,'Good but material is thin');
+INSERT INTO "Review" VALUES (6,6,8,5,'Looks amazing');
+INSERT INTO "Review" VALUES (7,7,9,4,'Spacious and durable');
+INSERT INTO "Review" VALUES (8,8,2,5,'Perfect jeans');
+INSERT INTO "Tracking_Detail" VALUES (1,1);
+INSERT INTO "Tracking_Detail" VALUES (2,2);
+INSERT INTO "Tracking_Detail" VALUES (3,3);
+INSERT INTO "Tracking_Detail" VALUES (4,4);
+INSERT INTO "Tracking_Detail" VALUES (5,5);
+INSERT INTO "Tracking_Detail" VALUES (6,6);
+INSERT INTO "Tracking_Detail" VALUES (7,7);
+INSERT INTO "Tracking_Detail" VALUES (8,8);
+INSERT INTO "User" VALUES (1,'Mariam','Ali','mariam.ali@gmail.com','K9@fT2xQ!','01055544321');
+INSERT INTO "User" VALUES (2,'Nour','Ahmed','nour.ahmed@gmail.com','mP#7Zq!3L','01122233445');
+INSERT INTO "User" VALUES (3,'Yara','Hossam','yara.hossam@gmail.com','R8$wA1e@K','01299988776');
+INSERT INTO "User" VALUES (4,'Lina','Fathy','lina.fathy@gmail.com','T!9xQ2M$h','01077889911');
+INSERT INTO "User" VALUES (5,'Dina','Samir','dina.samir@gmail.com','A7@Dk3P!x','01133445566');
+INSERT INTO "User" VALUES (6,'Salma','Youssef','salma.youssef@gmail.com','Z#4M!Q9sE','01222334455');
+INSERT INTO "User" VALUES (7,'Farah','Omar','farah.omar@gmail.com','8W@xL!2QK','01044556677');
+INSERT INTO "User" VALUES (8,'Menna','Ashraf','menna.ashraf@gmail.com','P@5T7!mZQ','01188990011');
+INSERT INTO "admin" VALUES (NULL,'admin1@store.com','Main Admin','X9@Q2!Lm8','Super Admin');
+INSERT INTO "admin" VALUES (NULL,'admin2@store.com','Store Manager','A7!Kp@9Z','Manager');
+COMMIT;
